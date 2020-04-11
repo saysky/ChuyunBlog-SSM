@@ -1,5 +1,6 @@
 target/
 logs/
+out/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
@@ -35,6 +36,6 @@ nbdist/
 *.factorypath
 
 ### 屏蔽，需要完整代码联系博主：微信847064370
-*.jsp
+*.html
+/templates
 /webapp
-
