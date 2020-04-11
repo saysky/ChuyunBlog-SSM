@@ -1,0 +1,31 @@
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.font-success {
+    color: #087623;
+}
+.font-warning {
+    color: #8a3a12;
+}
+.share-box {
+    width: 250px;
+    height: 30px;
+    margin: 100px auto;
+    transform: scale(1.1);
+}
+.share-box > div {
+    width: 30px;
+    height: 30px;
+    float: left;
+    cursor: pointer;
+    border-radius: 4px;
+    background-size: contain;
+    margin: 0 10px;
+}
+#share-qrcode { background-image: url(/static/front/images/wechat.png); }
+#share-sina { background-image: url(/static/front/images/sina.png); }
+#share-qq { background-image: url(/static/front/images/qq.png); }

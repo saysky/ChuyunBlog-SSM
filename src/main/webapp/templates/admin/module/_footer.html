@@ -1,0 +1,29 @@
+<footer class="main-footer">
+    <div class="pull-right hidden-xs"><a href="#">2020</a></div>
+    Thanks for using <strong><a data-pjax="true" href="#">初云博客</a>.</strong>
+</footer>
+
+<script src="/static/plugins/pjax/jquery.pjax.js"></script>
+<script src="/static/plugins/pace/pace.min.js"></script>
+<script src="/static/js/adminlte.min.js"></script>
+<script src="/static/plugins/toast/js/jquery.toast.min.js"></script>
+<script src="/static/plugins/layer/layer.js"></script>
+<script src="/static/plugins/froala-editor/js/froala_editor.pkgd.min.js"></script>
+<script src="/static/plugins/froala-editor/js/languages/zh_cn.js"></script>
+<script src="/static/plugins/froala-editor/js/plugins/image_manager.min.js"></script>
+<script src="/static/js/app.js"></script>
+<script>
+    Pace.options = {
+        restartOnRequestAfter: false
+    };
+    $(document).ajaxStart(function () {
+        Pace.restart();
+    });
+    $(document).pjax('a[data-pjax=true]', '.content-wrapper', {
+        fragment: '.content-wrapper',
+        timeout: 8000
+    });
+    var heading = "提示";
+</script>
+</body>
+</html>

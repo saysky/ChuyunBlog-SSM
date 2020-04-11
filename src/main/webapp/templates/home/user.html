@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh_CN" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="home/module/_header"></div>
+<main id="tt-pageContent">
+    <div class="tt-custom-mobile-indent container">
+        <div class="tt-categories-title">
+            <div class="tt-title">活跃用户列表</div>
+        </div>
+         <div class="tt-list-avatar">
+        <div class="row" >
+            <div class="col-6 col-md-4 col-lg-3" th:each="user : ${users}">
+                <a th:href="'/user/'+${user.id}" class="tt-avatar">
+                    <div class="tt-col-icon">
+                        <img th:src="${user.userAvatar}" class="avatar" alt="">
+                    </div>
+                    <div class="tt-col-description">
+                        <h6 class="tt-title">[[${user.userDisplayName}]]</h6>
+                        <div class="tt-value">@[[${user.userName}]]</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</main>
+<div th:replace="home/module/_footer"></div>

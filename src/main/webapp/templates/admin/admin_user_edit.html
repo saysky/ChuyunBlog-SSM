@@ -1,0 +1,284 @@
+<div th:replace="admin/module/_header"></div>
+
+<div class="wrapper">
+    <!-- 菜单栏模块 -->
+    <div th:replace="admin/module/_sidebar"></div>
+    <div class="content-wrapper">
+        <style>
+            .form-horizontal .control-label {
+                text-align: left;
+            }
+        </style>
+        <section class="content-header">
+            <h1>
+                修改用户
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" href="/admin">
+                        <i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li><a data-pjax="true" href="#">用户管理</a></li>
+                <li class="active">修改用户</li>
+            </ol>
+        </section>
+        <!-- tab选项卡 -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#general"
+                                   data-toggle="tab">基本信息</a>
+                            </li>
+                            <li>
+                                <a href="#pass"
+                                   data-toggle="tab">修改密码</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="general">
+                                <form method="post" class="form-horizontal" id="profileForm">
+                                    <input type="hidden" name="id" th:value="${user.id}">
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="roleId" class="col-lg-2 col-sm-4 control-label">
+                                                角色
+                                            </label>
+                                            <div class="col-lg-4 col-sm-8">
+                                                <select class="form-control" name="roleId" id="roleId">
+                                                    <option value="" disabled>角色</option>
+                                                    <option th:value="${role.id}" th:each="role : ${roles}"
+                                                            th:selected="${currentRole.id == role.id}">
+                                                        [[${role.description}]]
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="userName"
+                                                   class="col-lg-2 col-sm-4 control-label">用户名
+                                                <span data-toggle="tooltip" data-placement="top"
+                                                      title=用户登录的账号
+                                                      style="cursor: pointer">
+                                                    <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                                </span>
+                                            </label>
+                                            <div class="col-lg-4 col-sm-8">
+                                                <input type="text" class="form-control" id="userName" name="userName"
+                                                       th:value="${user.userName}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="userDisplayName"
+                                                   class="col-lg-2 col-sm-4 control-label">显示名
+                                                <span data-toggle="tooltip" data-placement="top"
+                                                      title="用户显示的名称"
+                                                      style="cursor: pointer">
+                                                    <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                                </span>
+                                            </label>
+                                            <div class="col-lg-4 col-sm-8">
+                                                <input type="text" class="form-control" id="userDisplayName"
+                                                       name="userDisplayName" th:value="${user.userDisplayName}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="userEmail"
+                                                   class="col-lg-2 col-sm-4 control-label">电子邮箱</label>
+                                            <div class="col-lg-4 col-sm-8">
+                                                <input type="email" class="form-control" id="userEmail" name="userEmail"
+                                                       th:value="${user.userEmail}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="userDesc"
+                                                   class="col-lg-2 col-sm-4 control-label">描述
+                                            </label>
+                                            <div class="col-lg-4 col-sm-8">
+                                                <textarea class="form-control" rows="3" id="userDesc" name="userDesc"
+                                                          style="resize: none">[[${user.userDesc}]]</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-lg-2 col-sm-4 control-label">状态</label>
+                                            <div class="col-lg-4 col-sm-8 control-radio">
+                                                <div class="pretty p-default p-round">
+                                                    <input type="radio" name="status"
+                                                           value="0" th:checked="${user.status== 0}">
+                                                    <div class="state p-primary">
+                                                        <label>启用</label>
+                                                    </div>
+                                                </div>
+                                                <div class="pretty p-default p-round">
+                                                    <input type="radio" name="status"
+                                                           value="1" th:checked="${user.status== 1}">
+                                                    <div class="state p-primary">
+                                                        <label>禁用</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer">
+                                        <button type="button" class="btn btn-primary btn-sm "
+                                                onclick="saveUser('profileForm')">保存
+                                        </button>
+                                        <a href="/admin/user"
+                                           class="btn btn-info btn-sm">返回</a>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane" id="pass">
+                                <form method="post" class="form-horizontal" id="passForm">
+                                    <input type="hidden" id="id" name="id" value="${user.id}">
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="newPass"
+                                                   class="col-sm-2 control-label">新密码</label>
+                                            <div class="col-sm-4">
+                                                <input type="password" class="form-control" id="newPass" name="newPass">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="reNewPass"
+                                                   class="col-sm-2 control-label">确认密码</label>
+                                            <div class="col-sm-4">
+                                                <input type="password" class="form-control" id="reNewPass"
+                                                       name="reNewPass">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer">
+                                        <button type="button" class="btn btn-primary btn-sm "
+                                                onclick="changPass()">修改
+                                        </button>
+                                        <a href="/admin/user"
+                                           class="btn btn-info btn-sm">返回</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script th:inline="javascript">
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
+
+            // ztree文档地址：http://www.treejs.cn/v3/api.php
+            var setting = {
+                view: {
+                    addHoverDom: false,
+                    removeHoverDom: false,
+                    selectedMulti: false,
+                    showIcon: false,
+                    showLine: false
+                },
+                check: {
+                    enable: true,
+                    chkboxType: {"Y": "p", "N": ""}
+                },
+                data: {
+                    simpleData: {
+                        enable: true,
+                        idKey: "id",
+                        pIdKey: "pid",
+                        rootPId: 0
+                    }
+                },
+                edit: {
+                    enable: false
+                }
+            };
+
+
+            function saveUser(option) {
+
+                var userName = $('#userName').val();
+                var userDisplayName = $('#userDisplayName').val();
+                var userEmail = $('#userEmail').val();
+                if (userName == "" || userDisplayName == "" || userEmail == "") {
+                    showMsg('请输入完整信息', "error", 2000);
+                    return;
+                }
+
+                var param =  $('#' + option).serialize();
+                $.ajax({
+                    type: 'post',
+                    url: '/admin/user/save',
+                    data: param,
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 1) {
+                            $.toast({
+                                text: data.msg,
+                                heading: '提示',
+                                icon: 'success',
+                                showHideTransition: 'fade',
+                                allowToastClose: true,
+                                hideAfter: 1000,
+                                stack: 1,
+                                position: 'top-center',
+                                textAlign: 'left',
+                                loader: true,
+                                loaderBg: '#ffffff',
+                                afterHidden: function () {
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            showMsg(data.msg, "error", 1000);
+                        }
+                    }
+                });
+            }
+
+            function changPass() {
+                var newPass = $('#newPass').val();
+                var reNewPass = $('#reNewPass').val();
+                if (newPass == "" || reNewPass == "") {
+                    showMsg("请输入完整信息", "info", 2000);
+                    return;
+                }
+                if (newPass != reNewPass) {
+                    showMsg("两次密码不一致", "error", 1000);
+                    return;
+                }
+                var param = $('#passForm').serialize();
+                $.ajax({
+                    type: 'post',
+                    url: '/admin/user/proxy/changePass',
+                    data: param,
+                    success: function (data) {
+                        if (data.code == 1) {
+                            $.toast({
+                                text: data.msg,
+                                heading: '提示',
+                                icon: 'success',
+                                showHideTransition: 'fade',
+                                allowToastClose: true,
+                                hideAfter: 1000,
+                                stack: 1,
+                                position: 'top-center',
+                                textAlign: 'left',
+                                loader: true,
+                                loaderBg: '#ffffff',
+                                afterHidden: function () {
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            showMsg(data.msg, "error", 1000);
+                        }
+                    }
+                });
+            }
+        </script>
+    </div>
+</div>
+<div th:replace="admin/module/_footer"></div>
+

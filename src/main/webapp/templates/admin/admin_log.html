@@ -1,0 +1,168 @@
+<div th:replace="admin/module/_header"></div>
+
+<div class="wrapper">
+    <div th:replace="admin/module/_sidebar"></div>
+    <div class="content-wrapper">
+        <style type="text/css" rel="stylesheet">
+            .role-ul > li {
+                list-style: none;
+                float: left;
+                margin: 0;
+                padding-bottom: 10px
+            }
+        </style>
+        <section class="content-header">
+            <h1 style="display: inline-block;">日志管理</h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" href="/admin">
+                        <i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li><a data-pjax="true" href="#">日志管理</a></li>
+                <li class="active">日志列表</li>
+            </ol>
+        </section>
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-md-4 col-xs-12" style="margin-bottom: 10px;padding-left: 0;">
+                        <button type="button" class="btn btn-danger" onclick="clearAll()">
+                            <i class="fa fa-remove"></i> 清空
+                        </button>
+                    </div>
+                    <div class="col-md-8 col-xs-12"
+                         style="margin-bottom: 10px; text-align:right;padding-left: 0; padding-right: 0;">
+                        <form class="form-inline" action="/admin/log">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="name" name="name"
+                                       th:value="${name}" placeholder="标题搜索">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" name="logType">
+                                    <option value="" disabled>日志类型</option>
+                                    <option value="operation" th:selected="${logType == 'operation'}">操作</option>
+                                    <option value="login" th:selected="${logType == 'login'}">登录</option>
+                                    <option value="ban" th:selected="${logType == 'ban'}">违规记录</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-body table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>操作人</th>
+                                    <th>类型</th>
+                                    <th>标题</th>
+                                    <th>URL</th>
+                                    <th>IP</th>
+                                    <th class="col-md-2">创建时间</th>
+                                    <th class="col-md-1">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:id="'log-'+${log.id}" th:each="log : ${logs}">
+                                    <td>[[${log.username}]]</td>
+                                    <td>
+                                        <span th:if="${log.logType == 'login'}">登录</span>
+                                        <span th:if="${log.logType == 'operation'}">操作</span>
+                                        <span th:if="${log.logType == 'ban'}">违规记录</span>
+                                    </td>
+                                    <td th:text="${log.name != null ? log.name : '不存在的接口' }"></td>
+                                    <td>[[${log.requestUrl}]]</td>
+                                    <td>[[${log.ip}]]</td>
+                                    <td th:text="${#dates.format(log.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                                    <td>
+                                        <a href="javascript:void(0)" th:onclick="'removeIt('+${log.id}+')'"
+                                           class="btn btn-danger btn-xs ">删除</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="box-footer clearfix">
+                            <div class="no-margin pull-left">
+                                第 [[${pageInfo.current}]] / [[${pageInfo.pages}]] 页
+                            </div>
+                            <ul class="pagination no-margin pull-right">
+                                <li><a data-pjax="true" th:classappend="${pageInfo.current == 1 ? 'disabled' : ''}"
+                                       class="btn btn-sm"
+                                       th:href="'/admin/log?name='+${name}+'&logType='+${logType}+'&sort='+${sort}+'&order='+${order}">
+                                    首页
+                                </a>
+                                </li>
+                                <li><a data-pjax="true" class="btn btn-sm"
+                                       th:classappend="${pageInfo.current == 1 ? 'disabled' : ''}"
+                                       th:href="'/admin/log?name='+${name}+'&page='+${pageInfo.current-1}+'&logType='+${logType}+'&sort='+${sort}+'&order='+${order}">
+                                    上一页
+                                </a>
+                                </li>
+                                <li><a data-pjax="true" class="btn btn-sm"
+                                       th:classappend="${pageInfo.current == pageInfo.pages ? 'disabled' : ''}"
+                                       th:href="'/admin/log?name='+${name}+'&page='+${pageInfo.current+1}+'&logType='+${logType}+'&sort='+${sort}+'&order='+${order}">
+                                    下一页
+                                </a>
+                                </li>
+                                <li><a data-pjax="true" class="btn btn-sm"
+                                       th:classappend="${pageInfo.current == pageInfo.pages ? 'disabled' : ''}"
+                                       th:href="'/admin/log?name='+${name}+'&page='+${pageInfo.pages}+'&logType='+${logType}+'&sort='+${sort}+'&order='+${order}">
+                                    尾页
+                                </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>
+
+            function removeIt(id) {
+                layer.confirm("你确定是否删除？", function (index) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/admin/log/delete',
+                        async: false,
+                        data: {
+                            'id': id
+                        },
+                        success: function (data) {
+                            if (data.code == 0) {
+                                showMsg(data.msg, "error", 1000);
+                            } else {
+                                showMsg(data.msg, "success", 2000);
+                                $('#log-' + id).remove();
+                            }
+
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+
+            function clearAll() {
+                layer.confirm('你确定是否清空日志?', function (index) {
+                    $.ajax({
+                        url: "/admin/log/clear",
+                        type: "POST",
+                        success: function (data) {
+                            if (data.code == 0) {
+                                showMsg(data.msg, "error", 1000);
+                            } else {
+                                showMsgAndReload(data.msg, "success", 2000);
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+
+        </script>
+    </div>
+</div>
+<div th:replace="admin/module/_footer"></div>
+

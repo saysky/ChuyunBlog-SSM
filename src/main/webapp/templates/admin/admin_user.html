@@ -1,0 +1,211 @@
+<div th:replace="admin/module/_header"></div>
+
+<div class="wrapper">
+    <div th:replace="admin/module/_sidebar"></div>
+    <div class="content-wrapper">
+        <style type="text/css" rel="stylesheet">
+            .role-ul > li {
+                list-style: none;
+                float: left;
+                margin: 0;
+                padding-bottom: 10px
+            }
+        </style>
+        <section class="content-header">
+            <h1 style="display: inline-block;">用户管理</h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" href="/admin">
+                        <i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li><a data-pjax="true" href="#">用户管理</a></li>
+                <li class="active">用户列表</li>
+            </ol>
+        </section>
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-md-4 col-xs-12" style="margin-bottom: 10px;padding-left: 0;">
+                        <a class="btn btn-primary" href="/admin/user/new">
+                            <i class="fa fa-plus"></i> 新增
+                        </a>
+                        <button type="button" class="btn btn-danger" onclick="batchDelete()">
+                            <i class="fa fa-remove"></i> 批量删除
+                        </button>
+                    </div>
+                    <div class="col-md-8 col-xs-12"
+                         style="margin-bottom: 10px; text-align:right;padding-left: 0; padding-right: 0;">
+                        <form class="form-inline" action="/admin/user">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="keywords" name="keywords"
+                                       th:value="${keywords}" placeholder="请输入关键字">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" name="searchType">
+                                    <option value="content" disabled>搜索范围</option>
+                                    <option value="userName" th:selected="${searchType == 'userName'}">用户名</option>
+                                    <option value="userDisplayName" th:selected="${searchType == 'userDisplayName'}">显示名</option>
+                                    <option value="email" th:selected="${searchType == 'email'}">电子邮箱</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" name="role">
+                                    <option value="none" disabled>角色</option>
+                                    <option value="none" selected>不限</option>
+                                    <option th:value="${role.role}" th:each="role : ${roles}"
+                                            th:selected="${role.role == currentRole}">
+                                        [[${role.description}]]
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" name="status">
+                                    <option value="-1" disabled>状态</option>
+                                    <option value="0" th:selected="${status == 0}">正常</option>
+                                    <option value="1" th:selected="${status == 1}">禁止登录</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" name="sort">
+                                    <option value="createTime" disabled>排序字段</option>
+                                    <option value="createTime" th:selected="${sort == 'createTime'}">创建时间</option>
+                                    <option value="loginLast" th:selected="${sort == 'loginLast'}">最后登录时间</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" name="order">
+                                    <option value="desc" disabled>升序/降序</option>
+                                    <option value="asc" th:selected="${order == 'asc'}">升序</option>
+                                    <option value="desc" th:selected="${order == 'desc'}">倒序</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-body table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="allSelect" onclick="doCheck()"></th>
+                                    <th>用户名</th>
+                                    <th>昵称</th>
+                                    <th>邮箱</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                    <th>ID</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:id="'user-'+${user.id}" th:each="user : ${users}">
+                                    <td><input type="checkbox" name="ids" th:value="${user.id}"></td>
+                                    <td>
+                                        [[${user.userName}]]
+                                    </td>
+                                    <td>[[${user.userDisplayName}]]</td>
+                                    <td>[[${user.userEmail}]]</td>
+                                    <td>
+                                        <span class="text-success" th:if="${user.status == 0}">正常</span>
+                                        <span class="text-danger" th:if="${user.status == 1}">禁用</span>
+                                    </td>
+                                    <td th:text="${#dates.format(user.createTime,'yyyy-MM-dd HH:mm')}"></td>
+                                    <td>
+                                        <a th:href="'/admin/user/edit?id='+${user.id}"
+                                           class="btn btn-info btn-xs ">编辑</a>
+                                        <a href="javascript:void(0)" th:onclick="'removeIt('+${user.id}+')'"
+                                           class="btn btn-danger btn-xs ">删除</a>
+                                    </td>
+                                    <td>[[${user.id}]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="box-footer clearfix">
+                            <div class="no-margin pull-left">
+                                第 [[${pageInfo.current}]] / [[${pageInfo.pages}]] 页
+                            </div>
+                            <ul class="pagination no-margin pull-right">
+                                <li><a data-pjax="true"  th:classappend="${pageInfo.current == 1 ? 'disabled' : ''}" class="btn btn-sm"
+                                       th:href="'/admin/user?role='+${currentRole}+'&searchType='+${searchType}+'&keywords='+${keywords}+'&status='+${status}+'&sort='+${sort}+'&order='+${order}">
+                                    首页
+                                </a>
+                                </li>
+                                <li><a data-pjax="true" class="btn btn-sm"  th:classappend="${pageInfo.current == 1 ? 'disabled' : ''}"
+                                       th:href="'/admin/user?role='+${currentRole}+'&page='+${pageInfo.current-1}+'&searchType='+${searchType}+'&keywords='+${keywords}+'&status='+${status}+'&sort='+${sort}+'&order='+${order}">
+                                    上一页
+                                </a>
+                                </li>
+                                <li><a data-pjax="true" class="btn btn-sm"  th:classappend="${pageInfo.current == pageInfo.pages ? 'disabled' : ''}"
+                                       th:href="'/admin/user?role='+${currentRole}+'&page='+${pageInfo.current+1}+'&searchType='+${searchType}+'&keywords='+${keywords}+'&status='+${status}+'&sort='+${sort}+'&order='+${order}">
+                                    下一页
+                                </a>
+                                </li>
+                                <li><a data-pjax="true" class="btn btn-sm" th:classappend="${pageInfo.current == pageInfo.pages ? 'disabled' : ''}"
+                                       th:href="'/admin/user?role='+${currentRole}+'&page='+${pageInfo.pages}+'&searchType='+${searchType}+'&keywords='+${keywords}+'&status='+${status}+'&sort='+${sort}+'&order='+${order}">
+                                    尾页
+                                </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script>
+
+            function removeIt(id) {
+                layer.confirm("你确定是否删除？", function (index) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/admin/user/delete',
+                        async: false,
+                        data: {
+                            'id': id
+                        },
+                        success: function (data) {
+                            if (data.code == 0) {
+                                showMsg(data.msg, "error", 1000);
+                            } else {
+                                showMsg(data.msg, "success", 2000);
+                                $('#user-' + id).remove();
+                            }
+
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+
+            function batchDelete() {
+                var arr = [];
+                $('input[name="ids"]:checked').each(function () {
+                    arr.push($(this).val());
+                });
+                if (arr.length <= 0) {
+                    showMsg('请选择要删除的记录', "error", 1000);
+                } else {
+                    layer.confirm('你确定是否删除?', function (index) {
+                        $.ajax({
+                            url: "/admin/user/batchDelete?ids=" + arr,
+                            type: "POST",
+                            success: function (data) {
+                                if (data.code == 0) {
+                                    showMsg(data.msg, "error", 1000);
+                                } else {
+                                    showMsgAndReload(data.msg, "success", 2000);
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    });
+                }
+            }
+
+        </script>
+    </div>
+</div>
+<div th:replace="admin/module/_footer"></div>
+

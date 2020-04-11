@@ -1,0 +1,128 @@
+<div th:replace="admin/module/_header"></div>
+
+<div class="wrapper">
+    <!-- 菜单栏模块 -->
+    <div th:replace="admin/module/_sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1 style="display: inline-block;">权限管理</h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" href="/admin"><i
+                            class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li><a data-pjax="true" href="#">权限管理</a></li>
+                <li class="active">添加权限</li>
+            </ol>
+        </section>
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-8    ">
+                    <div class="nav-tabs-custom">
+                        <div class="box box-primary">
+                            <div class="box-body table-responsive">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">添加权限</h3>
+                                </div>
+                                <form action="/admin/permission/save" method="post" role="form" id="permissionAddForm">
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            <label for="name">名称</label>
+                                            <input type="text" class="form-control" id="name" name="name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="url">URL</label>
+                                            <input type="text" class="form-control" id="url" name="url">
+                                            <small>URL路径</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sort">排序</label>
+                                            <input type="number" class="form-control" id="sort" name="sort">
+                                            <small>排序字段，越小越靠前，支持小数</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pid">父节点</label>
+                                            <select class="form-control" id="pid" name="pid">
+                                                <option value="0">无</option>
+                                                <option th:each="permission : ${permissionList}"
+                                                        th:if="${permission.resourceType != 'button'}"
+                                                        th:class="'permission-level-'+${permission.level}"
+                                                        th:value="${permission.id}"
+                                                        th:utext="${permission.name}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="icon">图标</label>
+                                            <input type="text" class="form-control" id="icon" name="icon">
+                                            <small>用于后台菜单图标</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="resourceType">资源类型</label>
+                                            <select class="form-control" id="resourceType" name="resourceType">
+                                                <option value="button">接口</option>
+                                                <option value="page">页面</option>
+                                                <option value="menu">菜单</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="box-footer">
+                                        <button type="submit" class="btn btn-primary btn-sm ">保存
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="nav-tabs-custom">
+                        <div class="box box-primary">
+                            <div class="box-body table-responsive">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">权限树</h3>
+                                </div>
+                                <div class="form-group">
+                                    <ul id="permission" class="ztree"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script th:inline="javascript">
+            // ztree文档地址：http://www.treejs.cn/v3/api.php
+            var setting = {
+                view: {
+                    addHoverDom: false,
+                    removeHoverDom: false,
+                    selectedMulti: false,
+                    showIcon: false,
+                    showLine: false
+                },
+                check: {
+                    enable: true,
+                    chkboxType: {"Y": "p", "N": ""}
+                },
+                data: {
+                    simpleData: {
+                        enable: true,
+                        idKey: "id",
+                        pIdKey: "pid",
+                        rootPId: 0
+                    }
+                },
+                edit: {
+                    enable: false
+                }
+            };
+
+            var permissions = [[${permissions}]]
+            $.fn.zTree.init($("#permission"), setting, permissions);
+
+
+        </script>
+    </div>
+</div>
+<div th:replace="admin/module/_footer"></div>
+

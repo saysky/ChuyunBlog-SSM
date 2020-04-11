@@ -1,0 +1,147 @@
+<div th:replace="admin/module/_header"></div>
+
+<div class="wrapper">
+    <!-- 菜单栏模块 -->
+    <div th:replace="admin/module/_sidebar"></div>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1>
+                添加角色
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" href="/admin">
+                        <i class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li><a data-pjax="true" href="#">角色管理</a></li>
+                <li class="active">添加角色</li>
+            </ol>
+        </section>
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">添加角色</h3>
+                        </div>
+                        <form action="/admin/role/save" method="post" role="form" id="roleAddForm">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="role">角色编码</label>
+                                    <input type="text" class="form-control" id="role" name="role">
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">角色名称</label>
+                                    <input type="text" class="form-control" id="description" name="description">
+                                </div>
+                                <div class="form-group">
+                                    <label for="level">角色等级
+                                        <span data-toggle="tooltip" data-placement="top"
+                                              title="数字越大等级越大"
+                                              style="cursor: pointer">
+                                                    <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                                </span>
+                                    </label>
+                                    <input type="number" class="form-control" id="level" name="level">
+                                </div>
+                                <div class="form-group">
+                                    <label for="permission">权限</label>
+                                    <ul id="permission" class="ztree"></ul>
+                                </div>
+                            </div>
+                            <div class="box-footer">
+                                <button type="button" onclick="saveRole()"
+                                        class="btn btn-primary btn-sm ">保存
+                                </button>
+                                <a href="/admin/role"
+                                   class="btn btn-info btn-sm">返回</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script th:inline="javascript">
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
+
+            // ztree文档地址：http://www.treejs.cn/v3/api.php
+            var setting = {
+                view: {
+                    addHoverDom: false,
+                    removeHoverDom: false,
+                    selectedMulti: false,
+                    showIcon: false,
+                    showLine: false
+                },
+                check: {
+                    enable: true
+                    // chkboxType: {"Y": "p", "N": ""}
+                },
+                data: {
+                    simpleData: {
+                        enable: true,
+                        idKey: "id",
+                        pIdKey: "pid",
+                        rootPId: 0
+                    }
+                },
+                edit: {
+                    enable: false
+                }
+            };
+
+            var permissions = [[${permissions}]]
+            $.fn.zTree.init($("#permission"), setting, permissions);
+
+
+            function saveRole() {
+                var treeObj = $.fn.zTree.getZTreeObj("permission"),
+                    nodes = treeObj.getCheckedNodes(true);
+                var permissionIds = '';
+                for (var i = 0; i < nodes.length; i++) {
+                    permissionIds += nodes[i].id + ',';
+                }
+                console.log(permissionIds);
+                var role = $('#role').val();
+                var description = $('#description').val();
+                if (role == "" || description == "" || permissionIds.length == 0) {
+                    showMsg('请输入完整信息', "error", 2000);
+                    return;
+                }
+                var param = $.param({'permissionIds': permissionIds}) + '&' + $('#roleAddForm').serialize();
+                $.ajax({
+                    type: 'post',
+                    url: '/admin/role/save',
+                    data: param,
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 1) {
+                            $.toast({
+                                text: data.msg,
+                                heading: '提示',
+                                icon: 'success',
+                                showHideTransition: 'fade',
+                                allowToastClose: true,
+                                hideAfter: 1000,
+                                stack: 1,
+                                position: 'top-center',
+                                textAlign: 'left',
+                                loader: true,
+                                loaderBg: '#ffffff',
+                                afterHidden: function () {
+                                    window.location.href = "/admin/role";
+                                }
+                            });
+                        } else {
+                            showMsg(data.msg, "error", 1000);
+                        }
+                    }
+                });
+            }
+        </script>
+    </div>
+</div>
+<div th:replace="admin/module/_footer"></div>
+

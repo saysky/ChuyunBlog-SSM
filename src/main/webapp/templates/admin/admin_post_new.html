@@ -1,0 +1,127 @@
+<div th:replace="admin/module/_header"></div>
+<div class="wrapper">
+    <!-- 菜单栏模块 -->
+    <div th:replace="admin/module/_sidebar"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+        <style type="text/css">
+            #title {
+                font-weight: 400;
+                border-radius: 0;
+            }
+
+            #cateId option {
+                border-radius: 0;
+            }
+
+            #tags {
+                border-radius: 0;
+            }
+            .form-horizontal .control-label {
+                text-align: left;
+            }
+
+            .editor-preview-active img, .editor-preview-active-side img {
+                width: 100%;
+            }
+
+            .fr-toolbar {
+                border-top: 1px solid #ccc !important;
+            }
+
+            .fr-wrapper > div[style*='z-index: 9999'] {
+                position: absolute;
+                top: -10000px;
+                opacity: 0;
+                height: 0;
+            }
+        </style>
+        <section class="content-header">
+            <h1 style="display: inline-block;">文章发布</h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" href="#"><i
+                            class="fa fa-dashboard"></i> 首页</a>
+                </li>
+                <li>
+                    <a data-pjax="true" href="/admin/post">文章管理</a>
+                </li>
+                <li class="active">文章发布</li>
+            </ol>
+        </section>
+        <section class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="box box-primary">
+                        <!-- form start -->
+                        <form role="form">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <input type="text" class="form-control input-lg" id="title" placeholder="请输入标题">
+                                </div>
+                                <div class="form-group" id='edit'></div>
+                                <div class="form-group">
+                                    <select class="form-control  input-lg" id="cateId">
+                                        <option th:each="c : ${categories}" th:value="${c.id}">[[${c.cateName}]]</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control input-lg" id="tags"   placeholder="请输入标签,逗号分隔" >
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+
+                            <div class="box-footer">
+                                <button type="button" class="btn btn-primary" onclick="push(0)">发布</button>
+                                <button type="button" class="btn btn-info" onclick="push(1)">暂存</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+        <script>
+
+
+            //页面加载完成后再执行
+            $(function () {
+                $('#edit').froalaEditor({
+                    heightMin: 500,
+                    heightMax: 1000,
+                    placeholderText: '',
+                    pastePlain: true,
+                    theme: 'gray',
+                    fontFamilySelection: true,
+                    fontSizeSelection: true,
+                    paragraphFormatSelection: true,
+                    toolbarButtons: ['paragraphFormat', 'bold', 'italic', 'underline', 'strikeThrough', 'quote', 'insertLink', 'emoticons', 'insertImage', 'insertVideo', 'embedly', 'insertFile', 'insertTable',
+                        'align', 'formatOL', 'formatUL', 'fullscreen', '-', 'fontFamily', 'fontSize', 'color', 'outdent', 'indent', 'specialCharacters', 'insertHR', 'clearFormatting',
+                        'print', 'spellChecker', 'undo', 'redo', 'help', 'html',],
+                    imageAllowedTypes: ['jpg', 'gif', 'png', 'jpeg', 'svg', 'psd'],
+                    imageDefaultWidth: 100,
+                    imageInsertButtons: ['imageBack', '|', 'imageUpload', 'imageByURL'],
+                    imageUploadURL: '/admin/file/upload',
+                    imageManagerLoadURL: '/admin/file/upload',
+                    imageManagerLoadMethod: "GET",
+                    imageManagerPageSize: 4,
+                    imageManagerScrollOffset: 20,
+                    fileUploadURL: '/admin/file/upload',
+                    videoUploadURL: '/admin/file/upload',
+                    imagePaste: true,
+                    imageMove: true,
+                    pastePlain: true,
+                    toolbarStickyOffset: 50,
+                    tableResizer: true,
+                    language:'zh_cn'
+                });
+
+            });
+
+        </script>
+    </div>
+
+</div>
+<div th:replace="admin/module/_footer"></div>
