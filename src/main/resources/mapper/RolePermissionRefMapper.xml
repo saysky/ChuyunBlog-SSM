@@ -20,17 +20,16 @@
           AND del_flag = 0
   </delete>
 
-
     <insert id="batchInsert">
-    <foreach collection="list" item="item">
         INSERT INTO
         role_permission_ref
         ( role_id, permission_id )
         VALUES
-        (
+        <foreach collection="list" item="item" separator=",">
+            (
             #{item.roleId}, #{item.permissionId}
-        );
-    </foreach>
-  </insert>
+            )
+        </foreach>
+    </insert>
 
 </mapper>

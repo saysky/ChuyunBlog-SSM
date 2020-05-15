@@ -7,6 +7,7 @@ import com.example.blog.entity.Post;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,8 +68,14 @@ public interface PostMapper extends BaseMapper<Post> {
      * @param page
      * @return
      */
-    List<Post> findPostByCondition(@Param("condition") PostQueryCondition condition, @Param("page") Page page);
+    List<Post> findPostByCondition(@Param("condition") PostQueryCondition condition, Page page);
 
 
+    /**
+     * 获取某个用户的文章列表
+     * @param userId
+     * @return
+     */
+    List<Long> selectIdByUserId(Long userId);
 }
 

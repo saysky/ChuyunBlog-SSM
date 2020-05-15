@@ -93,33 +93,33 @@
 
     <select id="findPostByCondition" resultMap="BaseResultMap">
         SELECT
-            p.id,
-            p.post_title,
-            p.post_type,
-            p.post_summary,
-            p.post_thumbnail,
-            p.create_time,
-            p.post_status,
-            p.post_views,
-            p.post_likes,
-            p.comment_size,
-            p.is_recommend,
-            p.is_sticky,
-            u.user_display_name,
-            u.user_avatar,
-            u.user_name,
-            u.id user_id,
-            c.id cate_id,
-            c.cate_name,
-            c.cate_sort
+        p.id,
+        p.post_title,
+        p.post_type,
+        p.post_summary,
+        p.post_thumbnail,
+        p.create_time,
+        p.post_status,
+        p.post_views,
+        p.post_likes,
+        p.comment_size,
+        p.is_recommend,
+        p.is_sticky,
+        u.user_display_name,
+        u.user_avatar,
+        u.user_name,
+        u.id user_id,
+        c.id cate_id,
+        c.cate_name,
+        c.cate_sort
         FROM
-            post p,
-            user u,
-            category c,
-            post_category_ref pc
-            <if test="condition.tagId != null">
-                , post_tag_ref pt
-            </if>
+        post p,
+        user u,
+        category c,
+        post_category_ref pc
+        <if test="condition.tagId != null">
+            , post_tag_ref pt
+        </if>
         <where>
             p.post_status = 0 AND
             <if test="condition.cateId != null">
@@ -129,7 +129,7 @@
                 u.id = #{condition.userId} AND
             </if>
             <if test="condition.keywords != null">
-                p.post_title LIKE CONCAT('%', #{condition.keywords} ,'%')  AND
+                p.post_title LIKE CONCAT('%', #{condition.keywords} ,'%') AND
             </if>
             <if test="condition.tagId != null">
                 pt.tag_id = #{condition.tagId} AND
@@ -143,6 +143,10 @@
             c.del_flag = 0 AND
             pc.del_flag = 0
         </where>
+    </select>
+
+    <select id="selectIdByUserId" resultType="java.lang.Long">
+        SELECT id FROM post WHERE user_id = #{userId} AND del_flag = 0
     </select>
 
 </mapper>

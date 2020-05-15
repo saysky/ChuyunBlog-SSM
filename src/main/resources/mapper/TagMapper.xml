@@ -22,6 +22,7 @@
             r.post_id = #{value}
             AND r.tag_id = t.id
             AND t.del_flag = 0
+            AND r.del_flag = 0
     </select>
 
     <select id="findAllWithCount" resultType="com.example.blog.entity.Tag">
@@ -60,11 +61,11 @@
 
     <select id="getHotTags" resultType="com.example.blog.entity.Tag">
         SELECT
-            t.id,
-            t.tag_name,
-            (select count(*) from post_tag_ref r where r.tag_id = t.id AND r.del_flag = 0) count
+        t.id,
+        t.tag_name,
+        (select count(r.post_id) from post_tag_ref r, post p where p.id = r.post_id and p.post_status = 0 and r.tag_id = t.id AND r.del_flag = 0 and p.del_flag = 0 ) count
         FROM
-            tag t
+        tag t
         WHERE
         t.del_flag = 0
         <if test="keywords != null and keywords != ''">

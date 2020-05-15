@@ -21,6 +21,14 @@ public interface PostTagRefMapper extends BaseMapper<PostTagRef> {
     Integer deleteByPostId(Long postId);
 
     /**
+     * 根据文章Id删除记录
+     *
+     * @param postIds 文章Id集合
+     * @return 影响行数
+     */
+    Integer deleteByPostIds(List<Long> postIds);
+
+    /**
      * 根据标签Id删除记录
      *
      * @param tagId 标签Id

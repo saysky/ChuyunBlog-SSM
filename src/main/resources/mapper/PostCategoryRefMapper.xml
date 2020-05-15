@@ -12,6 +12,18 @@
           AND del_flag = 0
   </delete>
 
+    <delete id="deleteByPostIds">
+      DELETE
+      FROM
+          post_category_ref
+      WHERE
+        post_id IN
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+          AND del_flag = 0
+  </delete>
+
     <delete id="deleteByCateId">
       DELETE
       FROM

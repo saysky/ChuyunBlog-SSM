@@ -14,6 +14,10 @@ import java.io.IOException;
  */
 public class FileUtil {
 
+
+    public final static String rootPath = "/Users/liuyanzhao/Desktop/uploads";
+//    public final String rootPath = "D:\\uploads";
+
     /**
      * 上传文件返回URL
      *
@@ -23,9 +27,9 @@ public class FileUtil {
     public static String upload(MultipartFile file) {
         String path = "";
         try {
-            //用户目录
-            final StrBuilder uploadPath = new StrBuilder(System.getProperties().getProperty("user.home"));
-            uploadPath.append("/sens/upload/" + DateUtil.thisYear()).append("/").append(DateUtil.thisMonth() + 1).append("/");
+            // 上传目录
+            StrBuilder uploadPath = new StrBuilder(rootPath);
+            uploadPath.append(DateUtil.thisYear()).append("/").append(DateUtil.thisMonth() + 1).append("/");
             final File mediaPath = new File(uploadPath.toString());
             if (!mediaPath.exists()) {
                 if (!mediaPath.mkdirs()) {
@@ -65,7 +69,7 @@ public class FileUtil {
             fullSmallPath.append(fileSuffix);
 
             //映射路径
-            final StrBuilder filePath = new StrBuilder("/upload/");
+            final StrBuilder filePath = new StrBuilder("/uploads/");
             filePath.append(DateUtil.thisYear());
             filePath.append("/");
             filePath.append(DateUtil.thisMonth() + 1);
