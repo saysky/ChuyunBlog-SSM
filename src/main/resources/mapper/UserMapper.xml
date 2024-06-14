@@ -169,4 +169,3 @@
         ORDER BY
             postCount DESC
     </select>
-</mapper>
